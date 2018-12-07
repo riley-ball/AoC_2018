@@ -4,7 +4,7 @@ def main():
     flag = 0
     list_count = 0
     while flag == 0:
-        with open ("./input.txt", "r") as input:
+        with open ("day_1/input.txt", "r") as input:
             list_count += 1
             print(list_count)
             for line in input:
