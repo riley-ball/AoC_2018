@@ -1,79 +1,52 @@
 from collections import defaultdict
+import string
+
+# answer: 10774, why am I 1 off??
+
 def main():
-    storage = {}
-    for line in open('day_4/input.txt', 'r'):
-        timestamp = line[1:17]
-        timestamp = timestamp.split(" ")
-        timestamp = "-".join(timestamp)
-        timestamp = timestamp.split(":")
-        timestamp = "-".join(timestamp)
-        storage[timestamp] = line[19:]
+    inputfile = ""
+    letters = string.ascii_lowercase
+    for i in open('day_5/input.txt', 'r'):
+        inputfile += i
+    prevlower = ""
+    prevupper = ""
+    hasChanged = True
+    storagedic = defaultdict(int)
+    for ascletter in letters:
+        newinput = inputfile.replace(ascletter, '')
+        newinput = newinput.replace(ascletter.upper(), '')
+        hasChanged = True
+        while hasChanged:
+            storage = ""
+            changes = 0
+            for letter in newinput:
+                if letter.islower():
+                    if prevupper.lower() == letter:
+                        storage = storage[0:-1]
+                        prevlower = ""
+                        prevupper = ""
+                        changes += 1
+                    else:
+                        storage += letter
+                        prevlower = letter
+                        prevupper = ""
+                if letter.isupper():
+                    if prevlower.upper() == letter:
+                        storage = storage[0:-1]
+                        prevlower = ""
+                        prevupper = ""
+                        changes += 1
+                    else:
+                        storage += letter
+                        prevupper = letter
+                        prevlower = ""
+            newinput = storage
+            if changes == 0:
+                print(ascletter, len(storage))
+                storagedic[ascletter] = len(storage)
+                hasChanged = False
+    print(sorted(storagedic.items(), key = lambda kv: kv[1], reverse = False))
 
-    sort = sorted(storage, key=lambda d: tuple(map(int, d.split('-'))))
-    guards = defaultdict(lambda : defaultdict(int))
-    guard = ""
-    sleep = ""
-
-    # iterate through all guards and record the nights they fall asleep - 
-    # looking for guard with most nights slept on a specific date
-    for k in sort:
-        v = storage[k]
-        if len(v.split(" ")) == 4:
-            guard = v.split(" ")[1]
-            sleep = ""
-        elif v.split(" ")[0] == "falls":
-            sleep = k
-        else:
-            if int(sleep.split("-")[3]) == 23:
-                if int(k.split("-")[3]) == 23:
-                    for i in range(int(sleep.split("-")[4]), int(k.split("-")[4]) + 1):
-                        guards[guard][i+2300] += 1
-                else:
-                    for i in range(int(sleep.split("-")[4]), 60):
-                        guards[guard][i+2300] += 1
-                    for i in range(0, int(k.split("-")[4]) + 1):
-                        guards[guard][i] += 1
-            else:
-                for i in range(int(sleep.split("-")[4]), int(k.split("-")[4]) + 1):
-                    guards[guard][i] += 1
-    # commontime = sorted(time.items(), key = lambda kv: kv[1], reverse = True)[0][0]
-    # print(sorted(guards.items(), key = lambda kv: kv[1].items(), reverse = True))
-    finaldic = defaultdict(list)
-    for k, v in guards.items():
-        finaldic[k] = sorted(v.items(), key = lambda kv: kv[1], reverse = True)
-        print(k, sorted(v.items(), key = lambda kv: kv[1], reverse = True)[0])
-    print(1901 * 51)
-    # # find most common guard for the time
-
-    # commonguard = defaultdict(int)
-
-    # for k in sort:
-    #     v = storage[k]
-    #     if len(v.split(" ")) == 4:
-    #         guard = v.split(" ")[1]
-    #         sleep = ""
-    #     elif v.split(" ")[0] == "falls":
-    #         sleep = k
-    #     else:
-    #         if int(sleep.split("-")[3]) == 23:
-    #             if int(k.split("-")[3]) == 23:
-    #                 for i in range(int(sleep.split("-")[4]), int(k.split("-")[4]) + 1):
-    #                     if i == commontime:
-    #                         commonguard[guard] += 1
-    #             else:
-    #                 for i in range(int(sleep.split("-")[4]), 60):
-    #                     if i == commontime:
-    #                         commonguard[guard] += 1
-    #                 for i in range(0, int(k.split("-")[4]) + 1):
-    #                     if i == commontime:
-    #                         commonguard[guard] += 1
-    #         else:
-    #             for i in range(int(sleep.split("-")[4]), int(k.split("-")[4]) + 1):
-    #                 if i == commontime:
-    #                         commonguard[guard] += 1
-    # print(sorted(commonguard.items(), key = lambda kv: kv[1], reverse = True))
-    # # print(commontime, theguard)
-    # # print(commontime * int(theguard[1:]))
 
 if __name__ == "__main__":
     main()

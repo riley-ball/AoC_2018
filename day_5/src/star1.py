@@ -36,7 +36,6 @@ def main():
         inputfile = storage
         print(len(storage), changes)
         if changes == 0:
-            
             hasChanged = False
 
 
