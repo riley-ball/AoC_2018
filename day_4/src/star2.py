@@ -10,7 +10,7 @@ def main():
         storage[timestamp] = line[19:]
 
     sort = sorted(storage, key=lambda d: tuple(map(int, d.split('-'))))
-    guards = defaultdict(int)
+    guards = defaultdict(lambda : defaultdict(int))
     guard = ""
     sleep = ""
 
@@ -27,18 +27,22 @@ def main():
             if int(sleep.split("-")[3]) == 23:
                 if int(k.split("-")[3]) == 23:
                     for i in range(int(sleep.split("-")[4]), int(k.split("-")[4]) + 1):
-                        time[i+2300] += 1
+                        guards[guard][i+2300] += 1
                 else:
                     for i in range(int(sleep.split("-")[4]), 60):
-                        time[i+2300] += 1
+                        guards[guard][i+2300] += 1
                     for i in range(0, int(k.split("-")[4]) + 1):
-                        time[i] += 1
+                        guards[guard][i] += 1
             else:
                 for i in range(int(sleep.split("-")[4]), int(k.split("-")[4]) + 1):
-                    time[i] += 1
-    commontime = sorted(time.items(), key = lambda kv: kv[1], reverse = True)[0][0]
-    print(sorted(time.items(), key = lambda kv: kv[1], reverse = True))
-    
+                    guards[guard][i] += 1
+    # commontime = sorted(time.items(), key = lambda kv: kv[1], reverse = True)[0][0]
+    # print(sorted(guards.items(), key = lambda kv: kv[1].items(), reverse = True))
+    finaldic = defaultdict(list)
+    for k, v in guards.items():
+        finaldic[k] = sorted(v.items(), key = lambda kv: kv[1], reverse = True)
+        print(k, sorted(v.items(), key = lambda kv: kv[1], reverse = True)[0])
+    print(1901 * 51)
     # # find most common guard for the time
 
     # commonguard = defaultdict(int)
